@@ -1,6 +1,7 @@
 package com.thanhhnguyen23.tdd.bookstoread;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("A bookshelf")
+@ExtendWith(BooksParameterResolver.class)
 public class BookShelfSpec {
 
     private BookShelf shelf;
@@ -19,6 +21,27 @@ public class BookShelfSpec {
     private Book mythicalManMonth;
     private Book cleanCode;
 
+
+    @BeforeEach
+    // version 2
+    void init(Map<String, Book> books) {
+    // version 1
+//    void init() throws Exception{
+
+        shelf = new BookShelf();
+
+        // version 2
+        this.effectiveJava = books.get("Effective Java");
+        this.codeComplete = books.get("Code Complete");
+        this.mythicalManMonth = books.get("The Mytical Man-Month");
+        this.cleanCode = books.get("Clean Code");
+
+        // version 1 // tightly coupled test data
+//        effectiveJava = new Book ("Effective Java", "Joshua Bloch", LocalDate.of(2008, Month.MAY, 8));
+//        codeComplete = new Book("Code Compelte", "Steve McConnel", LocalDate.of(2004, Month.JUNE, 9));
+//        mythicalManMonth = new Book ("The Mytical Man-Month", "Fredrick Phillips Brooks", LocalDate.of(1975, Month.JANUARY, 1));
+//        cleanCode = new Book ("Clean Code", "Robert C. Martin", LocalDate.of(2008, Month.AUGUST, 11));
+    }
     @Nested
     @DisplayName("is empty")
     class isEmpty{
@@ -48,15 +71,6 @@ public class BookShelfSpec {
 
         }
 
-    }
-
-    @BeforeEach
-    void init() throws Exception{
-        shelf = new BookShelf();
-        effectiveJava = new Book ("Effective Java", "Joshua Bloch", LocalDate.of(2008, Month.MAY, 8));
-        codeComplete = new Book("Code Compelte", "Steve McConnel", LocalDate.of(2004, Month.JUNE, 9));
-        mythicalManMonth = new Book ("The Mytical Man-Month", "Fredrick Phillips Brooks", LocalDate.of(1975, Month.JANUARY, 1));
-        cleanCode = new Book ("Clean Code", "Robert C. Martin", LocalDate.of(2008, Month.AUGUST, 11));
     }
 
     @Test
@@ -118,9 +132,6 @@ public class BookShelfSpec {
     void bookshelfArrangedByUserProvidedCriteria(){
         shelf.add(effectiveJava, codeComplete, mythicalManMonth);
 
-        /**
-         * NOTE - validate that the result is ordered by the provided comparator rather than comparing result with another collection
-         */
         // version 2
         Comparator<Book> reversed = Comparator.<Book>naturalOrder().reversed();
         List<Book> books = shelf.arrange(reversed);
